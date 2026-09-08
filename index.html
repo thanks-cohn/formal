@@ -55,10 +55,8 @@ strong{font-weight:700}
 em{color:#45413b}
 blockquote{margin:28px 0;padding:19px 24px;border-left:3px solid #504c44;background:#f3f0e9;font-family:Georgia,"Times New Roman",serif;font-size:1.18rem;line-height:1.6}
 .signature{margin-top:40px;padding-top:26px;border-top:1px solid var(--line);font-family:Georgia,"Times New Roman",serif;line-height:1.6}
-.placeholder{min-height:66vh;display:grid;place-items:center;text-align:center}
-.placeholder .inner{max-width:430px}
-.placeholder h1{font-size:2.6rem}
-.placeholder p{color:var(--muted)}
+.reference{margin-top:38px;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem;line-height:1.65}
+.reference strong{color:#49453f}
 .controls{max-width:920px;margin:24px auto 0;display:flex;justify-content:space-between;align-items:center;gap:14px}
 .navbtn{appearance:none;border:1px solid #8b867d;background:rgba(250,248,243,.74);color:#282620;padding:13px 17px;border-radius:999px;cursor:pointer;transition:.2s ease;min-width:135px}
 .navbtn:hover:not(:disabled){background:#24231f;color:#fff;transform:translateY(-1px)}
@@ -103,7 +101,7 @@ blockquote{margin:28px 0;padding:19px 24px;border-left:3px solid #504c44;backgro
         <div class="paper">
           <div class="kicker">Carta 01 · Queja formal</div>
           <h1>Queja formal por maltrato, hostigamiento y conducta agresiva en el lugar de trabajo</h1>
-          <div class="purpose-subheader">Formal and Correct Paths of Documentation</div>
+          <div class="purpose-subheader">Formal Complaint</div>
           <div class="meta"><span><strong>Remitente:</strong> Mahanaim Gtz.</span><span><strong>Dirigida a:</strong> Señora Susan</span></div>
           <p class="salutation"><strong>Estimada Señora Susan:</strong></p>
 
@@ -162,16 +160,119 @@ blockquote{margin:28px 0;padding:19px 24px;border-left:3px solid #504c44;backgro
 
   <div class="controls">
     <button class="navbtn" id="prev" disabled>← Carta anterior</button>
-    <div class="hint">Use las flechas o deslice para pasar entre cartas.</div>
+    <div class="hint">Use las flechas o deslice para pasar entre documentos.</div>
     <button class="navbtn" id="next">Carta siguiente →</button>
   </div>
 </main>
 
-<aside class="rack" aria-label="Índice de cartas"><div class="rack-inner" id="rack"></div></aside>
+<aside class="rack" aria-label="Índice de documentos"><div class="rack-inner" id="rack"></div></aside>
 </div>
 
-<script is:inline>
-const TOTAL = 11;
+<script>
+const workerRights = [
+  {
+    kicker: "Derecho laboral 01 · Ley federal",
+    title: "National Labor Relations Act",
+    subheader: "El derecho de los trabajadores a actuar juntos sobre las condiciones de trabajo.",
+    sections: [
+      ["Qué protege", "La National Labor Relations Act protege, para muchos empleados del sector privado, el derecho a organizarse, formar o apoyar sindicatos y participar en actividades concertadas para ayuda o protección mutua. Esto puede incluir hablar con compañeros sobre salarios, horarios, seguridad y otras condiciones de trabajo."],
+      ["Por qué importa", "Un trabajador no tiene que enfrentar necesariamente los problemas del lugar de trabajo de manera aislada. La ley federal reconoce que los empleados pueden actuar colectivamente para plantear inquietudes y buscar mejoras."]
+    ],
+    reference: "National Labor Relations Act, 29 U.S.C. §§ 151–169 · National Labor Relations Board (NLRB)"
+  },
+  {
+    kicker: "Derecho laboral 02 · Ley federal",
+    title: "Fair Labor Standards Act",
+    subheader: "Normas federales básicas sobre salario, horas y registros de trabajo.",
+    sections: [
+      ["Qué protege", "La Fair Labor Standards Act establece, para empleados cubiertos, reglas federales sobre salario mínimo, pago de horas extra, mantenimiento de ciertos registros y trabajo infantil. La cobertura y las exenciones dependen del empleo y de las funciones realizadas."],
+      ["Por qué importa", "El tiempo trabajado y la compensación correspondiente deben tratarse como asuntos documentables y verificables. Mantener registros claros ayuda a proteger tanto al trabajador como al empleador."]
+    ],
+    reference: "Fair Labor Standards Act, 29 U.S.C. §§ 201–219 · U.S. Department of Labor, Wage and Hour Division"
+  },
+  {
+    kicker: "Derecho laboral 03 · Ley federal",
+    title: "Occupational Safety and Health Act",
+    subheader: "El trabajo no debería exigir aceptar peligros graves como condición normal del empleo.",
+    sections: [
+      ["Qué protege", "La Occupational Safety and Health Act establece obligaciones federales de seguridad y salud en el trabajo. Entre ellas, exige a los empleadores cubiertos proporcionar un lugar de trabajo libre de peligros reconocidos que puedan causar muerte o daño físico grave."],
+      ["Por qué importa", "Los trabajadores pueden plantear inquietudes de seguridad y, en las circunstancias cubiertas por la ley, existen protecciones contra represalias por ejercer derechos relacionados con OSHA."]
+    ],
+    reference: "Occupational Safety and Health Act, 29 U.S.C. §§ 651–678 · Occupational Safety and Health Administration (OSHA)"
+  },
+  {
+    kicker: "Derecho laboral 04 · Ley federal",
+    title: "Title VII of the Civil Rights Act of 1964",
+    subheader: "Las decisiones de empleo no deben basarse en discriminación prohibida.",
+    sections: [
+      ["Qué protege", "Title VII prohíbe que los empleadores cubiertos discriminen en el empleo por raza, color, religión, sexo u origen nacional. También contiene protecciones contra represalias por oponerse de buena fe a prácticas discriminatorias o participar en ciertos procesos protegidos."],
+      ["Por qué importa", "El acceso al trabajo, las condiciones laborales, la disciplina y otras decisiones de empleo deben evaluarse con criterios legítimos, no sobre la base de características protegidas."]
+    ],
+    reference: "Title VII of the Civil Rights Act of 1964, 42 U.S.C. §§ 2000e et seq. · U.S. Equal Employment Opportunity Commission (EEOC)"
+  },
+  {
+    kicker: "Derecho laboral 05 · Ley federal",
+    title: "Americans with Disabilities Act",
+    subheader: "La discapacidad no elimina el derecho a una oportunidad laboral justa.",
+    sections: [
+      ["Qué protege", "Title I of the ADA prohíbe, para empleadores cubiertos, la discriminación contra personas calificadas con discapacidades y puede requerir ajustes razonables para permitirles realizar su trabajo, salvo que el ajuste represente una dificultad indebida para el empleador."],
+      ["Por qué importa", "Una condición médica o discapacidad no debe convertirse automáticamente en una razón para excluir, degradar o negar oportunidades a una persona capaz de realizar las funciones esenciales de su puesto con o sin un ajuste razonable."]
+    ],
+    reference: "Americans with Disabilities Act, Title I, 42 U.S.C. §§ 12111–12117 · U.S. Equal Employment Opportunity Commission (EEOC)"
+  },
+  {
+    kicker: "Derecho laboral 06 · Ley federal",
+    title: "Family and Medical Leave Act",
+    subheader: "Ciertas necesidades médicas y familiares pueden requerir tiempo protegido fuera del trabajo.",
+    sections: [
+      ["Qué protege", "La Family and Medical Leave Act permite a empleados elegibles de empleadores cubiertos tomar licencia no remunerada y protegida por el empleo por determinadas razones familiares y médicas, sujeta a requisitos de elegibilidad y cobertura."],
+      ["Por qué importa", "La ley reconoce que existen momentos en que conservar el empleo y atender una necesidad médica o familiar seria no deberían ser objetivos incompatibles."]
+    ],
+    reference: "Family and Medical Leave Act, 29 U.S.C. §§ 2601–2654 · U.S. Department of Labor, Wage and Hour Division"
+  },
+  {
+    kicker: "Derecho laboral 07 · Ley federal",
+    title: "Equal Pay Act of 1963",
+    subheader: "Trabajo sustancialmente igual merece una compensación libre de discriminación salarial por sexo.",
+    sections: [
+      ["Qué protege", "La Equal Pay Act prohíbe, dentro de su alcance, pagar salarios distintos a trabajadores de diferente sexo por trabajos sustancialmente iguales que requieren habilidad, esfuerzo y responsabilidad similares y se realizan bajo condiciones de trabajo similares, salvo diferencias permitidas por la ley."],
+      ["Por qué importa", "La compensación debe poder justificarse mediante factores laborales legítimos y no simplemente por el sexo de la persona que realiza el trabajo."]
+    ],
+    reference: "Equal Pay Act of 1963, 29 U.S.C. § 206(d) · U.S. Equal Employment Opportunity Commission (EEOC)"
+  },
+  {
+    kicker: "Derecho laboral 08 · Ley federal",
+    title: "Pregnant Workers Fairness Act",
+    subheader: "El embarazo y condiciones relacionadas pueden requerir ajustes razonables en el trabajo.",
+    sections: [
+      ["Qué protege", "La Pregnant Workers Fairness Act exige a empleadores cubiertos proporcionar ajustes razonables por limitaciones conocidas relacionadas con el embarazo, el parto o condiciones médicas relacionadas, salvo que el ajuste cause una dificultad indebida."],
+      ["Por qué importa", "Una trabajadora no debería verse obligada a abandonar innecesariamente su empleo cuando un ajuste razonable puede permitirle continuar trabajando de manera segura."]
+    ],
+    reference: "Pregnant Workers Fairness Act, 42 U.S.C. §§ 2000gg–2000gg-6 · U.S. Equal Employment Opportunity Commission (EEOC)"
+  },
+  {
+    kicker: "Derecho laboral 09 · Ley federal",
+    title: "Uniformed Services Employment and Reemployment Rights Act",
+    subheader: "El servicio militar no debería borrar injustamente una carrera civil.",
+    sections: [
+      ["Qué protege", "USERRA protege, dentro de sus requisitos, los derechos laborales y de reempleo de personas que dejan temporalmente un empleo civil para prestar servicio uniformado. También prohíbe determinadas formas de discriminación y represalia relacionadas con ese servicio."],
+      ["Por qué importa", "Cumplir con obligaciones militares no debe convertirse, por sí solo, en una razón para perder injustamente el lugar que una persona había construido en su empleo civil."]
+    ],
+    reference: "USERRA, 38 U.S.C. §§ 4301–4335 · U.S. Department of Labor, Veterans’ Employment and Training Service"
+  },
+  {
+    kicker: "Derecho laboral 10 · Ley federal",
+    title: "Age Discrimination in Employment Act",
+    subheader: "La edad no debe convertirse en una excusa para descartar a un trabajador.",
+    sections: [
+      ["Qué protege", "La Age Discrimination in Employment Act protege a trabajadores de 40 años o más contra ciertas formas de discriminación por edad en el empleo por parte de empleadores cubiertos. También contempla protecciones contra represalias en circunstancias cubiertas."],
+      ["Por qué importa", "La experiencia y la edad de un trabajador deben evaluarse por su relación real con el trabajo, no mediante estereotipos o suposiciones sobre la capacidad de una persona."]
+    ],
+    reference: "Age Discrimination in Employment Act, 29 U.S.C. §§ 621–634 · U.S. Equal Employment Opportunity Commission (EEOC)"
+  }
+];
+
+const TOTAL = 1 + workerRights.length;
 const track = document.getElementById('track');
 const rack = document.getElementById('rack');
 const counter = document.getElementById('counter');
@@ -179,19 +280,31 @@ const prev = document.getElementById('prev');
 const next = document.getElementById('next');
 let index = 0;
 
-for(let i=1;i<TOTAL;i++){
-  const slide=document.createElement('article');
-  slide.className='letter-slide';
-  slide.dataset.title='Formal';
-  slide.innerHTML=`<div class="paper placeholder"><div class="inner"><div class="kicker">Carta ${String(i+1).padStart(2,'0')} · Formal</div><h1>Formal</h1><div class="purpose-subheader">Formal and Correct Paths of Documentation</div><section><h2>Purpose</h2><p>This space preserves a formal, clear, and correct path of documentation. Each letter is presented as a structured record with a section title, title, subheader, and body.</p></section></div></div>`;
+workerRights.forEach((law, i) => {
+  const slide = document.createElement('article');
+  slide.className = 'letter-slide';
+  slide.dataset.title = law.title;
+  slide.innerHTML = `
+    <div class="paper">
+      <div class="kicker">${law.kicker}</div>
+      <h1>${law.title}</h1>
+      <div class="purpose-subheader">${law.subheader}</div>
+      <div class="meta">
+        <span><strong>Serie:</strong> Derechos de los trabajadores</span>
+        <span><strong>Edición:</strong> Labor Day</span>
+      </div>
+      ${law.sections.map(section => `<section><h2>${section[0]}</h2><p>${section[1]}</p></section>`).join('')}
+      <div class="reference"><strong>Referencia federal:</strong> ${law.reference}<br>Referencia educativa general. La cobertura y aplicación de cada ley dependen de los hechos, el empleador, la clasificación del trabajador y la jurisdicción.</div>
+    </div>`;
   track.appendChild(slide);
-}
+});
 
 for(let i=0;i<TOTAL;i++){
   const b=document.createElement('button');
-  b.className='hook'+(i===0?' active filled':'');
-  b.setAttribute('aria-label',`Ir a la carta ${i+1}`);
-  b.innerHTML=`<span class="rack-label">Carta ${String(i+1).padStart(2,'0')}</span>`;
+  b.className='hook'+(i===0?' active filled':' filled');
+  b.setAttribute('aria-label',`Ir al documento ${i+1}`);
+  const label = i === 0 ? 'Queja formal' : `Derecho ${String(i).padStart(2,'0')}`;
+  b.innerHTML=`<span class="rack-label">${label}</span>`;
   b.addEventListener('click',()=>go(i));
   rack.appendChild(b);
 }
@@ -200,7 +313,9 @@ function go(i){
   index=Math.max(0,Math.min(TOTAL-1,i));
   track.style.transform=`translateX(-${index*100}%)`;
   [...rack.children].forEach((h,n)=>h.classList.toggle('active',n===index));
-  counter.textContent=`Carta ${String(index+1).padStart(2,'0')} de ${String(TOTAL).padStart(2,'0')}`;
+  counter.textContent=index===0
+    ? `Carta 01 de ${String(TOTAL).padStart(2,'0')}`
+    : `Derecho ${String(index).padStart(2,'0')} de ${String(TOTAL-1).padStart(2,'0')}`;
   prev.disabled=index===0;
   next.disabled=index===TOTAL-1;
   document.querySelectorAll('.letter-slide').forEach((s,n)=>s.classList.toggle('active-print',n===index));
