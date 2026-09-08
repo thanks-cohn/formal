@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Registro de Cartas</title>
-<meta name="description" content="Archivo profesional de cartas y quejas formales." />
+<title>Formal · Correct Paths of Documentation</title>
+<meta name="description" content="Formal and Correct Paths of Documentation — archivo profesional de cartas, quejas y documentación formal." />
 <style>
 :root{
   --paper:#fbfaf7;
@@ -45,6 +45,7 @@ button{font:inherit}
 .paper:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,#39372f 0 14%,#8d887f 14% 17%,transparent 17%)}
 .kicker{font-size:.72rem;text-transform:uppercase;letter-spacing:.18em;color:#777167;margin-bottom:18px;font-weight:700}
 h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2rem,5vw,3.65rem);line-height:1.03;margin:0 0 18px;font-weight:500;letter-spacing:-.025em}
+.purpose-subheader{font-family:Georgia,"Times New Roman",serif;font-size:1.08rem;line-height:1.55;color:#5f5a51;margin:-4px 0 22px;font-style:italic}
 .meta{display:flex;flex-wrap:wrap;gap:8px 20px;color:var(--muted);font-size:.9rem;border-bottom:1px solid var(--line);padding-bottom:25px;margin-bottom:38px}
 .salutation{font-family:Georgia,"Times New Roman",serif;font-size:1.08rem;margin-bottom:24px}
 section{margin:0 0 34px}
@@ -92,7 +93,7 @@ blockquote{margin:28px 0;padding:19px 24px;border-left:3px solid #504c44;backgro
 <div class="site-shell">
 <main class="stage">
   <div class="topbar">
-    <div class="brand">Registro de Cartas</div>
+    <div class="brand">Formal · Correct Paths of Documentation</div>
     <div class="counter" id="counter">Carta 01 de 11</div>
   </div>
 
@@ -102,6 +103,7 @@ blockquote{margin:28px 0;padding:19px 24px;border-left:3px solid #504c44;backgro
         <div class="paper">
           <div class="kicker">Carta 01 · Queja formal</div>
           <h1>Queja formal por maltrato, hostigamiento y conducta agresiva en el lugar de trabajo</h1>
+          <div class="purpose-subheader">Formal and Correct Paths of Documentation</div>
           <div class="meta"><span><strong>Remitente:</strong> Mahanaim Gtz.</span><span><strong>Dirigida a:</strong> Señora Susan</span></div>
           <p class="salutation"><strong>Estimada Señora Susan:</strong></p>
 
@@ -168,7 +170,7 @@ blockquote{margin:28px 0;padding:19px 24px;border-left:3px solid #504c44;backgro
 <aside class="rack" aria-label="Índice de cartas"><div class="rack-inner" id="rack"></div></aside>
 </div>
 
-<script>
+<script is:inline>
 const TOTAL = 11;
 const track = document.getElementById('track');
 const rack = document.getElementById('rack');
@@ -181,7 +183,7 @@ for(let i=1;i<TOTAL;i++){
   const slide=document.createElement('article');
   slide.className='letter-slide';
   slide.dataset.title='Formal';
-  slide.innerHTML=`<div class="paper placeholder"><div class="inner"><div class="kicker">Carta ${String(i+1).padStart(2,'0')}</div><h1>Formal</h1><p>Formal</p></div></div>`;
+  slide.innerHTML=`<div class="paper placeholder"><div class="inner"><div class="kicker">Carta ${String(i+1).padStart(2,'0')} · Formal</div><h1>Formal</h1><div class="purpose-subheader">Formal and Correct Paths of Documentation</div><section><h2>Purpose</h2><p>This space preserves a formal, clear, and correct path of documentation. Each letter is presented as a structured record with a section title, title, subheader, and body.</p></section></div></div>`;
   track.appendChild(slide);
 }
 
