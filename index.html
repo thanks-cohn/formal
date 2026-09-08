@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Registro de Cartas</title>
+<meta name="description" content="Archivo profesional de cartas y quejas formales." />
+<style>
+:root{
+  --paper:#fbfaf7;
+  --ink:#22221f;
+  --muted:#6d6a63;
+  --line:#d8d4cb;
+  --accent:#4f4b42;
+  --shadow:0 24px 70px rgba(42,39,34,.13);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 20% 10%,rgba(255,255,255,.95),transparent 32rem),
+    linear-gradient(135deg,#e8e5de,#f2f0eb 45%,#e5e1d9);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  min-height:100vh;
+}
+button{font:inherit}
+.site-shell{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) 86px}
+.stage{padding:42px clamp(18px,5vw,72px) 64px;overflow:hidden}
+.topbar{max-width:920px;margin:0 auto 28px;display:flex;align-items:end;justify-content:space-between;gap:24px}
+.brand{letter-spacing:.16em;text-transform:uppercase;font-size:.72rem;font-weight:750;color:#57534c}
+.counter{font-family:Georgia,"Times New Roman",serif;color:#5c5850;font-size:.95rem}
+.letter-frame{max-width:920px;margin:0 auto;position:relative}
+.letter-track{display:flex;width:100%;transition:transform .68s cubic-bezier(.22,.77,.16,1);will-change:transform}
+.letter-slide{min-width:100%;padding:0 2px}
+.paper{
+  background:var(--paper);
+  border:1px solid rgba(93,88,78,.16);
+  border-radius:2px;
+  box-shadow:var(--shadow);
+  padding:clamp(34px,7vw,82px) clamp(26px,7vw,86px) clamp(50px,8vw,92px);
+  position:relative;
+}
+.paper:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,#39372f 0 14%,#8d887f 14% 17%,transparent 17%)}
+.kicker{font-size:.72rem;text-transform:uppercase;letter-spacing:.18em;color:#777167;margin-bottom:18px;font-weight:700}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2rem,5vw,3.65rem);line-height:1.03;margin:0 0 18px;font-weight:500;letter-spacing:-.025em}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;color:var(--muted);font-size:.9rem;border-bottom:1px solid var(--line);padding-bottom:25px;margin-bottom:38px}
+.salutation{font-family:Georgia,"Times New Roman",serif;font-size:1.08rem;margin-bottom:24px}
+section{margin:0 0 34px}
+h2{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;margin:0 0 12px;color:#47443e}
+p{font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.02rem,1.5vw,1.16rem);line-height:1.76;margin:0 0 15px;color:#292824}
+strong{font-weight:700}
+em{color:#45413b}
+blockquote{margin:28px 0;padding:19px 24px;border-left:3px solid #504c44;background:#f3f0e9;font-family:Georgia,"Times New Roman",serif;font-size:1.18rem;line-height:1.6}
+.signature{margin-top:40px;padding-top:26px;border-top:1px solid var(--line);font-family:Georgia,"Times New Roman",serif;line-height:1.6}
+.placeholder{min-height:66vh;display:grid;place-items:center;text-align:center}
+.placeholder .inner{max-width:430px}
+.placeholder h1{font-size:2.6rem}
+.placeholder p{color:var(--muted)}
+.controls{max-width:920px;margin:24px auto 0;display:flex;justify-content:space-between;align-items:center;gap:14px}
+.navbtn{appearance:none;border:1px solid #8b867d;background:rgba(250,248,243,.74);color:#282620;padding:13px 17px;border-radius:999px;cursor:pointer;transition:.2s ease;min-width:135px}
+.navbtn:hover:not(:disabled){background:#24231f;color:#fff;transform:translateY(-1px)}
+.navbtn:disabled{opacity:.38;cursor:not-allowed}
+.hint{font-size:.76rem;color:#767168;text-align:center;letter-spacing:.04em}
+.rack{position:sticky;top:0;height:100vh;border-left:1px solid rgba(75,70,62,.16);display:flex;align-items:center;justify-content:center;background:rgba(235,232,225,.42);backdrop-filter:blur(10px)}
+.rack-inner{position:relative;height:min(74vh,690px);width:44px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px 0}
+.rack-inner:before{content:"";position:absolute;top:0;bottom:0;left:50%;width:2px;background:linear-gradient(#8c877e,#bdb8ae 50%,#8c877e);transform:translateX(-50%)}
+.hook{position:relative;z-index:2;width:16px;height:16px;border-radius:50%;border:2px solid #8d887e;background:#ece9e2;cursor:pointer;transition:.32s cubic-bezier(.22,.77,.16,1);padding:0}
+.hook:after{content:"";position:absolute;width:18px;height:1px;background:#a6a096;left:14px;top:50%;opacity:.55}
+.hook.active{width:28px;height:28px;background:#292720;border-color:#292720;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.hook.filled:not(.active){background:#6b665c}
+.rack-label{position:absolute;right:52px;white-space:nowrap;background:#292720;color:white;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;border-radius:3px;opacity:0;pointer-events:none;transform:translateX(8px);transition:.18s}
+.hook:hover .rack-label{opacity:1;transform:none}
+@media(max-width:760px){
+  .site-shell{grid-template-columns:minmax(0,1fr) 58px}
+  .stage{padding:24px 12px 44px}
+  .paper{padding:36px 24px 52px}
+  .topbar{padding:0 4px;margin-bottom:18px}
+  .controls{padding:0 4px}
+  .hint{display:none}
+  .navbtn{min-width:0;padding:11px 14px}
+  .rack-label{display:none}
+}
+@media(prefers-reduced-motion:reduce){.letter-track,.hook,.navbtn{transition:none}}
+@media print{
+  body{background:#fff}.site-shell{display:block}.rack,.controls,.topbar{display:none}.letter-slide{display:none}.letter-slide.active-print{display:block}.paper{box-shadow:none;border:0;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="site-shell">
+<main class="stage">
+  <div class="topbar">
+    <div class="brand">Registro de Cartas</div>
+    <div class="counter" id="counter">Carta 01 de 11</div>
+  </div>
+
+  <div class="letter-frame">
+    <div class="letter-track" id="track">
+      <article class="letter-slide active-print" data-title="Queja formal">
+        <div class="paper">
+          <div class="kicker">Carta 01 · Queja formal</div>
+          <h1>Queja formal por maltrato, hostigamiento y conducta agresiva en el lugar de trabajo</h1>
+          <div class="meta"><span><strong>Remitente:</strong> Mahanaim Gtz.</span><span><strong>Dirigida a:</strong> Señora Susan</span></div>
+          <p class="salutation"><strong>Estimada Señora Susan:</strong></p>
+
+          <p>Mi nombre es <strong>Mahanaim Gtz.</strong> y por medio de esta carta quiero informarle formalmente sobre una serie de problemas que he estado teniendo en la escuela con <strong>Tonia</strong>. Estos problemas comenzaron desde enero. Yo ya había reportado situaciones relacionadas con ella el año pasado, pero a partir de enero la situación empeoró considerablemente.</p>
+
+          <section><h2>Antecedentes del problema</h2>
+          <p>Considero que Tonia ha mantenido hacia mí una conducta <strong>agresiva, abusiva y poco respetuosa</strong>. Con frecuencia tira o desacomoda cosas, deja basura o desorden y después me responsabiliza a mí. También me grita y busca oportunidades para acercarse a donde estoy trabajando para decirme cosas de manera que otras personas no la escuchen.</p>
+          <p>Cuando regresamos a trabajar en agosto, los problemas continuaron.</p></section>
+
+          <section><h2>Incidentes ocurridos en agosto</h2>
+          <p>Aproximadamente el <strong>13 de agosto</strong>, Tonia estuvo revisando mi locker y tirando mi jugo y mi agua embotellada. Ese mismo periodo surgió un problema relacionado con un supuesto olor a perfume. Yo expliqué que <strong>no uso perfume</strong>.</p>
+          <p>Desde entonces, siento que constantemente busca algún motivo para agredirme o crearme problemas. Desacomoda mi trabajo, mueve mis cosas y después me culpa. Incluso ha revisado mi lonche y posteriormente me ha reportado por diferentes situaciones.</p>
+          <p>Le pregunté directamente por qué hacía esas cosas y por qué me trataba de manera tan agresiva. Ella respondió que tenía autoridad o permiso para hacerlo.</p>
+          <p>Cuando posteriormente hablé con <strong>Marizza</strong> sobre el trato que estaba recibiendo, me respondió que Tonia tenía autoridad porque era manager. Yo le pregunté si eso significaba que tenía permiso para maltratarme y se me respondió nuevamente que, por ser manager, podía hacerlo.</p></section>
+
+          <section><h2>Incidente del 31 de agosto</h2>
+          <p>El <strong>31 de agosto</strong>, mientras acomodaba mis jugos en el refrigerador, Tonia se acercó y me indicó que, cuando contara los jugos y la leche, debía anotarlos porque ella no podía adivinar lo que yo hacía.</p>
+          <p>Durante esa conversación me llamó <strong>“tonta”</strong> y me dijo que lo hacía para ponerme reportes. También me dijo que <strong>no me quería allí</strong> y que me iba a sacar a mí, después a <strong>Martha</strong> y después a <strong>Evelin</strong>.</p></section>
+
+          <section><h2>Agresión física del 1 de septiembre</h2>
+          <p>El <strong>1 de septiembre</strong>, Tonia desacomodó frutas y verduras y las sacó de sus cajas. Más tarde fui a la cocina por una bandeja y ella se paró en mi camino.</p>
+          <p><em>Tonia me empujó con la mano en el pecho y me dijo que me regresara.</em></p>
+          <p>Después se enojó, <strong>me agarró de los hombros y me sacudió</strong>. Le dije que no podía tratarme de esa manera y que me estaba lastimando en una zona donde anteriormente tuve cáncer.</p>
+          <blockquote><strong>“Para que aprendas.”</strong></blockquote></section>
+
+          <section><h2>Incidente del 2 de septiembre</h2>
+          <p>El <strong>2 de septiembre</strong>, Tonia supuestamente fue a ayudarme a lavar los trastes, pero nuevamente sentí que se acercaba principalmente para decirme cosas sin que otras personas pudieran escucharla.</p>
+          <p>Debido a esto fui a hablar con Marizza y le expliqué lo que estaba sucediendo. Nuevamente se me indicó que Tonia tenía autoridad como manager.</p></section>
+
+          <section><h2>Incidente del 3 de septiembre</h2>
+          <p>El <strong>3 de septiembre</strong>, yo estaba tomando mi descanso para comer cuando Tonia fue a avisarme que había agua y que debía ir a limpiar las mesas.</p>
+          <p>En ese momento no pude contestarle inmediatamente porque estaba comiendo. Debido al estrés que he sufrido anteriormente por problemas en otro lugar de trabajo y porque cuando hablo mientras estoy comiendo se me puede atorar la comida, no pude responder de inmediato.</p>
+          <p><em>Tonia entonces me amenazó con otro reporte.</em></p>
+          <p>Esto ocurrió aproximadamente a las <strong>11:30 de la mañana</strong>, durante mi descanso para comer. Después de ese incidente tuve tanta ansiedad que ya no pude terminar de comer.</p>
+          <p>El viernes siguiente tuve que faltar al trabajo debido al nivel de estrés y ansiedad que estaba experimentando. Todo este trato <strong>me ha puesto muy nerviosa y me ha provocado ataques de ansiedad</strong>.</p></section>
+
+          <section><h2>Insultos y acusaciones durante el trabajo</h2>
+          <p>En otra ocasión había una gran cantidad de trastes acumulados y fui a lavarlos. Tonia me llamó <strong>“tonta”</strong> y me dijo que me iba a reportar acusándome de aventarle los trastes.</p>
+          <p>También he observado que hay desorden acumulado desde la mañana, pero cuando intento hacer mi trabajo se me responsabiliza o se crean conflictos conmigo.</p>
+          <p>Desde agosto siento que Tonia busca constantemente motivos para acercarse a mí, desacomodar mi trabajo, acusarme de cosas o provocarme. En algunas ocasiones parece divertirse después de desordenar algo y posteriormente me ordena que yo lo arregle.</p></section>
+
+          <section><h2>Impacto de esta situación</h2>
+          <p>Todo esto ha afectado seriamente mi tranquilidad en el trabajo. <strong>Me siento nerviosa, intimidada y constantemente preocupada por lo que pueda ocurrir mientras intento cumplir con mis responsabilidades.</strong></p>
+          <p>Lo que más me preocupa es que la situación ya no se limita únicamente a comentarios, reportes o discusiones, sino que también ha incluido <strong>contacto físico, empujones y que me agarrara y sacudiera de los hombros</strong>.</p></section>
+
+          <section><h2>Solicitud de intervención</h2>
+          <p><strong>Señora Susan, considero que usted es una persona justa e inteligente.</strong> Lo único que estoy pidiendo es que se me permita <strong>trabajar en paz</strong>.</p>
+          <p>No estoy haciendo nada malo y quiero cumplir correctamente con mi trabajo. Siento que mi capacidad para trabajar y hacer bien mis responsabilidades les causa molestia a algunas personas, pero yo solamente quiero poder desempeñar mi trabajo <strong>sin ser insultada, intimidada, empujada, sacudida, amenazada con reportes ni sometida constantemente a este tipo de trato</strong>.</p>
+          <p>Le pido respetuosamente que esta situación sea investigada y que se tomen las medidas necesarias para que pueda desempeñar mi trabajo en un ambiente <strong>seguro y respetuoso</strong>, sin temor a represalias ni a nuevos incidentes.</p></section>
+
+          <div class="signature"><strong>Atentamente,</strong><br><strong>Mahanaim Gtz.</strong></div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="navbtn" id="prev" disabled>← Carta anterior</button>
+    <div class="hint">Use las flechas o deslice para pasar entre cartas.</div>
+    <button class="navbtn" id="next">Carta siguiente →</button>
+  </div>
+</main>
+
+<aside class="rack" aria-label="Índice de cartas"><div class="rack-inner" id="rack"></div></aside>
+</div>
+
+<script>
+const TOTAL = 11;
+const track = document.getElementById('track');
+const rack = document.getElementById('rack');
+const counter = document.getElementById('counter');
+const prev = document.getElementById('prev');
+const next = document.getElementById('next');
+let index = 0;
+
+for(let i=1;i<TOTAL;i++){
+  const slide=document.createElement('article');
+  slide.className='letter-slide';
+  slide.dataset.title='Formal';
+  slide.innerHTML=`<div class="paper placeholder"><div class="inner"><div class="kicker">Carta ${String(i+1).padStart(2,'0')}</div><h1>Formal</h1><p>Formal</p></div></div>`;
+  track.appendChild(slide);
+}
+
+for(let i=0;i<TOTAL;i++){
+  const b=document.createElement('button');
+  b.className='hook'+(i===0?' active filled':'');
+  b.setAttribute('aria-label',`Ir a la carta ${i+1}`);
+  b.innerHTML=`<span class="rack-label">Carta ${String(i+1).padStart(2,'0')}</span>`;
+  b.addEventListener('click',()=>go(i));
+  rack.appendChild(b);
+}
+
+function go(i){
+  index=Math.max(0,Math.min(TOTAL-1,i));
+  track.style.transform=`translateX(-${index*100}%)`;
+  [...rack.children].forEach((h,n)=>h.classList.toggle('active',n===index));
+  counter.textContent=`Carta ${String(index+1).padStart(2,'0')} de ${String(TOTAL).padStart(2,'0')}`;
+  prev.disabled=index===0;
+  next.disabled=index===TOTAL-1;
+  document.querySelectorAll('.letter-slide').forEach((s,n)=>s.classList.toggle('active-print',n===index));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+prev.onclick=()=>go(index-1);
+next.onclick=()=>go(index+1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(index+1);if(e.key==='ArrowLeft')go(index-1)});
+let touchX=null;
+track.addEventListener('touchstart',e=>touchX=e.changedTouches[0].screenX,{passive:true});
+track.addEventListener('touchend',e=>{if(touchX===null)return;const d=e.changedTouches[0].screenX-touchX;if(Math.abs(d)>55)go(index+(d<0?1:-1));touchX=null},{passive:true});
+</script>
+</body>
+</html>
